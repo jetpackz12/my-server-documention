@@ -302,7 +302,7 @@ Update scripts configuration.
 ## Proxy
 You might add a proxy for the ipa end point, create .env file in the root folder then paste this in the .env.
 ```bash
-VITE_API_URL=http://back_end_url/
+VITE_API_URL=http://back_end_url
 ```
 
 Update the vite.config.js and paste below.
@@ -333,7 +333,7 @@ After than update all endpoint.
 ```bash
 # Original endpoint
 axios
-  .get("http://10.0.0.224:8080/api/index") # Endpoint
+  .get("http://back_end_url/api/index") # Endpoint
   .then((response) => {
     this.json_data = response.data;
   })
@@ -379,7 +379,7 @@ server {
 
     # Proxy pass API requests to the backend server
     location /api/ {
-        proxy_pass http://10.0.0.224:8080;
+        proxy_pass http://back_end_url;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
