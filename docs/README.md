@@ -1,3 +1,78 @@
+# Virtual Machine Linux (Ubuntu) Server Configuration
+
+## Download Virtual Machine
+Go to this website. [LINK](https://www.virtualbox.org/wiki/Downloads) - In the 'VirtualBox Platform Packages' section, choose the OS version compatible with your system.
+
+## Download Ubuntu Server
+Go to this website. [LINK](https://ubuntu.com/download/server) - Click the Download button.
+
+## Creating new server
+The first thing you need to do is create a new server on your virtual machine.
+```bash
+# Click New.
+# Enter the name of your virtual machine.
+# For the type choose linux.
+# Then click next.
+```
+## Server setting
+Now you're done creating your virtual server. Next, edit the settings as shown below.
+```bash
+# General ( Advanced -> Shared Clipboard: Bidirectional, Drag'n'Drop: Bidirectional )
+# Storage ( Storage Devices -> Controller: IDE Select the ubuntu )
+# Network ( Attached to: Bridged Adapter then select name and choose your current internet connectivity )
+# Then click start.
+```
+
+## Server Configuration
+Once your inside of your created virtual server, follow the steps below.
+```bash
+# Inside on ubuntu server
+# Select english as default languge.
+# Select continue without updating.
+# Select done.
+# Here we need to change our ip to static ip so go to enp0ss3 then hit enter and choose Edit IPv4 then hit enter again and choose Manual. We need to edit the ( Subnet ex: 192.168.68.0/24, Address ex: 192.168.68.222, Gateway ex: 192.168.68.1, Name Server ex: 8.8.8.8, 8.8.4.4 ) then save. 
+# Select done.	
+# After that just select done to all.
+# Until your in Profile setup here we need to edit or configure ( Your name: ex: server, Your server name: ex: server, Username: ex: server, Password ex: server, Confirm password: ex: server )	
+# Select done.
+# Check the Install OpenSSH server you can do this by clicking the enter.
+# After that just select done to all.
+# Select Cancel update and reboot.
+# Press enter.
+
+# Here we login our account
+# server login ex:server
+# password ex:server
+
+# Now we run below commands
+sudo su
+password ex:server
+nano etc/ssh/sshd_config -> ( PermitRootLogin yes ) add this in the file and save using ( Ctrl-x, Ctrl-y then hit enter).
+systemctl restart sshd
+passwd
+new password ex:server
+retype new password ex:server
+ip a
+
+# ip a -> This command will output the IP address of your virtual machine. In our case, the IP is 192.168.68.222 since this is the address we set in the IPv4 configuration.
+# Now, we will use Git to install Nginx, PHP, Composer, MariaDB and Node in our server.
+```
+
+# How to access virtual server using git bash
+Open git bash and execute the command below.
+```bash
+# Check if the virtual server is active using the below command
+# In our case, the IP is 192.168.68.222 since this is the address we set in the IPv4 configuration for our server.
+ping 192.168.68.222
+
+# Now we will generate SSH key-based authentication, This allowing you to log into a remote system without entering a password, and in a more secure way
+# Press enter to all, if you already run this command before you can leave it as it just input n and enter. 
+ssh-keygen -t rsa -b 4096
+# Input yes and hit enter, input your password and hit enter.
+ssh-copy-id root@192.168.68.222
+ssh root@192.168.68.222
+```
+
 # Linux Server Installation ( Ubuntu 22.04 )
 
 ## Nginx 
@@ -468,3 +543,11 @@ After that restart nginx.
 ```bash
 systemctl restart nginx
 ```
+
+# My structure in laravel for rest api
+## Query Builder
+Use Query Builder for selecting / reading this provides readability and maintainability. <b>[LINK](QueryBuilder.md?id=home)</b>.
+
+
+## Eloquent ORM
+Use Eloquent ORM for Adding, Updating and Deleting data this provides a convenient and expressive way to interact with your database, while also giving you features like mass assignment protection, timestamps management, event handling, and more. <b>[LINK](EloquentORM.md?id=home)</b>.
