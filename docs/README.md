@@ -544,6 +544,69 @@ After that restart nginx.
 systemctl restart nginx
 ```
 
+# Local Virtual Hosts on your laptop/computer.
+## Virtual Host for Laravel (XAMPP)
+1. Put Your Laravel Project in htdocs.
+```bash
+  Example:
+  C:\xampp\htdocs\mysystem
+
+  Laravel public folder:
+  C:\xampp\htdocs\mysystem\public
+```
+
+2. Enable Virtual Hosts in Apache
+```bash
+  Open:
+  C:\xampp\apache\conf\httpd.conf
+
+  Make sure this line is NOT commented:
+  Include conf/extra/httpd-vhosts.conf
+
+  (no # at the start)
+```
+
+3. Create a Virtual Host
+```bash
+  Open:
+  C:\xampp\apache\conf\extra\httpd-vhosts.conf
+
+  Add this at the bottom:
+  <VirtualHost *:80>
+      ServerName mysystem.test
+      DocumentRoot "C:/xampp/htdocs/mysystem/public"
+
+      <Directory "C:/xampp/htdocs/mysystem/public">
+          AllowOverride All
+          Require all granted
+      </Directory>
+  </VirtualHost>
+
+  (Use forward slashes /, not \)
+```
+
+4. Update the Windows hosts File.
+```bash
+  Open Notepad as Administrator File:
+  #"C:\Windows\System32\drivers\etc\hosts"
+
+  Add:
+  #127.0.0.1   mysystem.test
+```
+
+
+5. Restart Apache
+```bash
+  From XAMPP Control Panel → Stop → Start Apache
+```
+
+6. Open Your Browser
+```bash
+  http://mysystem.test
+
+  BOOM — your Laravel app loads like a real website
+```
+
 # My structure in laravel for rest api
 ## Query Builder
 Use Query Builder for selecting / reading this provides readability and maintainability. <b>[LINK](QueryBuilder.md?id=home)</b>.
