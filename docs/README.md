@@ -544,6 +544,101 @@ After that restart nginx.
 systemctl restart nginx
 ```
 
+# How to setup SSH tunnel using heidisql.
+## Mariadb 50-config.cnf
+You need to update your Mariadb 50-config.cnf bind-address 
+```bash
+    bind-address            = 127.0.0.1 # 0.0.0.0 means you configures the database server to listen for network connections on all available network interface.
+    # systemctl restart mysql # restart you mysql.
+```
+## Create a new user on your mysql.
+```bash
+  sudo mariadb
+  grant all privileges on *.* to 'username'@'localhost' identified by 'password';
+  grant all privileges on *.* to 'username'@'127.0.0.1' identified by 'password';
+  flush privileges;
+  exit;
+```
+
+## Laravel .env
+```bash
+  DB_CONNECTION=mysql
+  DB_HOST=localhost
+  DB_PORT=3306
+  DB_DATABASE=your_database_name
+  DB_USERNAME=your_user_name
+  DB_PASSWORD=your_password
+```
+
+## Open HeidiSQL at the settings
+```bash
+  Network type: MariaDB or MySQL (SSH tunnel)
+  Hostname / IP: 127.0.0.1
+  User: username
+  Password: password
+  Port: 3306
+```
+
+## Open HeidiSQL at the SSH tunnel
+```bash
+  Check Use SSH tunnel
+  SSH executable: plink.exe
+  SSH host + port: your_host_ip_address
+  Username: root
+  Password: you_password
+  Local port: 3307
+```
+
+# How to install SSL Certificate.
+Production sites require HTTPS for security and SEO. Let’s Encrypt provides free SSL certificates. [LINK](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-laravel-with-nginx-on-ubuntu-20-04#step-7-ssl-configuration-with-let-s-encrypt)
+## Prerequisites for SSL
+Before running Certbot, verify:
+```bash
+  Domain points to your server: Run dig +short your_domain.com - it must return your server’s IP address
+  Port 80 is accessible: Let’s Encrypt validates via HTTP before issuing HTTPS certificates
+  Nginx is running: Check with sudo systemctl status nginx
+```
+
+## Installing Certbot
+Install Certbot and the Nginx plugin:
+```bash
+  sudo apt update
+  sudo apt install certbot python3-certbot-nginx
+```
+
+## Obtaining SSL Certificate
+Run Certbot with your domain:
+```bash
+  sudo certbot --nginx -d your_domain.com -d www.your_domain.com
+
+  # Certbot will:
+  # Verify you control the domain
+  # Generate SSL certificates
+  # Modify your Nginx config to use HTTPS
+  # Add an HTTP→HTTPS redirect
+
+  # When prompted “Please choose whether or not to redirect HTTP traffic to HTTPS”, select 2 (Redirect) for automatic HTTPS enforcement.
+```
+
+## What Certbot Changed
+Check your Nginx config to see the changes:
+```bash
+  sudo cat /etc/nginx/sites-available/your_nginx_config
+
+  # Certbot added these lines:
+  listen 443 ssl; # SSL port
+  ssl_certificate /etc/letsencrypt/live/your_domain.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/your_domain.com/privkey.pem;
+```
+
+## Testing Automatic Renewal
+Let’s Encrypt certificates expire after 90 days. Test the auto-renewal:
+```bash
+  sudo certbot renew --dry-run
+
+  # If successful, you’ll see: Congratulations, all simulated renewals succeeded. The system will automatically renew certificates before expiration via a systemd timer.
+```
+
 # Local Virtual Hosts on your laptop/computer.
 ## Virtual Host for Laravel (XAMPP)
 1. Put Your Laravel Project in htdocs.
